@@ -23,10 +23,18 @@ ADD bin/setup-apt.sh /usr/local/bin/
 RUN setup-apt-cache.sh
 RUN setup-apt.sh
 
+RUN set -ex && \
+    apt-get update && \
+    apt-get -y --no-install-recommends upgrade && \
+    apt-get -y --no-install-recommends install \
+    gcc-7 \
+    g++-7 \
+    vim
+
 ENV PATH=/usr/local/bin:/usr/bin:/bin
 
-ENV CC=/usr/bin/gcc
-ENV CXX=/usr/bin/g++
+ENV CC=gcc-7
+ENV CXX=g++-7
 ENV CFLAGS=
 ENV CXXFLAGS=
 ENV LDFLAGS=
