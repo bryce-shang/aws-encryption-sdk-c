@@ -18,16 +18,16 @@
 
 set -euxo pipefail
 
-ECS_REGISTRY=${ECS_REGISTRY:-636124823696.dkr.ecr.us-west-2.amazonaws.com/linux-docker-images}
+# ECS_REGISTRY=${ECS_REGISTRY:-636124823696.dkr.ecr.us-west-2.amazonaws.com/linux-docker-images}
 
-$(aws ecr get-login --no-include-email --region us-west-2)
+# $(aws ecr get-login --no-include-email --region us-west-2)
 
 build_image() {
-    docker build -t $1 -f $1.Dockerfile .
-    docker tag $1:latest $ECS_REGISTRY:$1
-    docker push $ECS_REGISTRY:$1
+    docker build -t ecsdk -f ubuntu-latest-x64.Dockerfile .
+    # docker tag $1:latest $ECS_REGISTRY:$1
+    # docker push $ECS_REGISTRY:$1
 }
 
-build_image trusty-gcc4x-x64
-build_image trusty-gcc4x-x86
+# build_image trusty-gcc4x-x64
+# build_image trusty-gcc4x-x86
 build_image ubuntu-latest-x64
