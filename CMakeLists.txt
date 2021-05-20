@@ -44,7 +44,13 @@ include(TestLibraryPath)
 include(CheckLibraryExists)
 include(CodeCoverageFlags)
 
+# TODO(shang): Does 'OPENSSL_ROOT_DIR' work with 'include(FindOpenSSL)'?
+# FindOpenSSL.cmake is not even show up in CMake trace log.
+# It seems CMAKE_PREFIX_PATH has higher priority than 'OPENSSL_ROOT_DIR'
+# https://gitlab.kitware.com/cmake/cmake/-/issues/18960
+# https://github.com/Kitware/CMake/blob/master/Modules/FindOpenSSL.cmake
 include(FindOpenSSL)
+message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR} OPENSSL_CRYPTO_LIBRARY: ${OPENSSL_CRYPTO_LIBRARY}")
 
 set(PROJECT_NAME aws-encryption-sdk)
 
