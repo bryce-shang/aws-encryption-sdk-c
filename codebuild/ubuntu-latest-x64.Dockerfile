@@ -29,6 +29,7 @@ RUN set -ex && \
     apt-get -y --no-install-recommends install \
     gcc-7 \
     g++-7 \
+    sudo \
     vim
 
 ENV PATH=/usr/local/bin:/usr/bin:/bin
@@ -63,3 +64,10 @@ ADD bin/codebuild-test.sh /usr/local/bin/
 
 # Remove apt proxy configuration before publishing the dockerfile
 RUN rm -f /etc/apt/apt.conf.d/99proxy
+
+# Add new user for development
+RUN /usr/sbin/useradd ubuntu
+RUN /usr/sbin/usermod -G root ubuntu
+
+RUN echo "" >> /etc/sudoers
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
