@@ -20,6 +20,8 @@
 #include <openssl/hmac.h>
 #include <openssl/opensslv.h>
 
+#include <openssl/base.h>
+
 static const EVP_MD *aws_cryptosdk_get_evp_md(enum aws_cryptosdk_sha_version which_sha) {
     switch (which_sha) {
         case AWS_CRYPTOSDK_SHA256: return EVP_sha256();
@@ -29,7 +31,7 @@ static const EVP_MD *aws_cryptosdk_get_evp_md(enum aws_cryptosdk_sha_version whi
     }
 }
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(OPENSSL_IS_AWSLC))
 
 static int aws_cryptosdk_hkdf_extract(
     /* prk must be a buffer of EVP_MAX_MD_SIZE bytes */
@@ -151,7 +153,7 @@ int aws_cryptosdk_hkdf(
     const struct aws_byte_buf *salt,
     const struct aws_byte_buf *ikm,
     const struct aws_byte_buf *info) {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(OPENSSL_IS_AWSLC))
     uint8_t prk[EVP_MAX_MD_SIZE];
     unsigned int prk_len = 0;
     if (aws_cryptosdk_hkdf_extract(prk, &prk_len, which_sha, salt, ikm)) goto err;

@@ -16,6 +16,14 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include <openssl/base.h>
+
+#if defined(OPENSSL_IS_AWSLC)
+#include <openssl/obj.h>
+#include <openssl/asn1t.h>
+#include <openssl/asn1.h>
+#endif
+
 #include <openssl/crypto.h>
 #include <openssl/opensslv.h>
 
@@ -295,13 +303,21 @@ static int serialize_pubkey(struct aws_allocator *alloc, EC_KEY *keypair, struct
     if (!*pub_key) {
         goto err;
     }
-
-    free(buf);
+    
+    #if defined(OPENSSL_IS_AWSLC)
+        OPENSSL_free(buf);
+    #else
+        free(buf);
+    #endif
     return AWS_OP_SUCCESS;
 
 err:
     // buf (and tmp) hold a public key, so we don't need to zeroize them.
-    free(buf);
+    #if defined(OPENSSL_IS_AWSLC)
+        OPENSSL_free(buf);
+    #else
+        free(buf);
+    #endif
 
     *pub_key = NULL;
 
@@ -413,11 +429,11 @@ err:
     aws_secure_zero(tmparr, sizeof(tmparr));
     if (privkey_buf) {
         aws_secure_zero(privkey_buf, privkey_len);
-        free(privkey_buf);
+        OPENSSL_free(privkey_buf);
     }
     if (pubkey_buf) {
         aws_secure_zero(pubkey_buf, pubkey_len);
-        free(pubkey_buf);
+        OPENSSL_free(pubkey_buf);
     }
 
     // There is no error path that results in a non-NULL priv_key, so we don't need to
